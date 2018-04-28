@@ -258,6 +258,7 @@ function getDivisors(n) {
 	return divisors
 }
 
+/* exported getConversionText */
 function getConversionText(conversion) {
 	let lines = [],
 		step = 1
@@ -323,6 +324,7 @@ function getTossRangeText(range) {
 	return seq.join(', ')
 }
 
+/* exported createDie */
 function createDie(n) {
 	if (n === 2) {
 		return ['H', 'T']
@@ -333,18 +335,4 @@ function createDie(n) {
 		die.push(String(i))
 	}
 	return die
-}
-
-let Ns = [4, 6, 8, 10, 12, 20],
-	row = ['a/b']
-for (let b of Ns) {
-	row.push(String(b))
-}
-console.log(row.join(' '))
-for (let a of Ns) {
-	let row = [String(a)]
-	for (let b of Ns) {
-		row.push(getBestConversion(createDie(a), createDie(b), true).expectation.toFixed(1))
-	}
-	console.log(row.join(' '))
 }
