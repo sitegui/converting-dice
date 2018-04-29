@@ -102,7 +102,7 @@ function getConversion(dieA, dieB, makeFair, throws) {
 			subConversion = conversion
 		} else if (subDie.length === 1) {
 			// Simple case
-			subConversion = subDie
+			subConversion = subDie[0]
 			z += range.faces.length / sizeA * throws
 		} else {
 			// Problem reduction
@@ -278,7 +278,7 @@ function getConversionText(conversion) {
 		lines.push(prefix + (step++) + '. Find the result in the following table:')
 
 		for (let [range, subConversion] of conversion.conversions) {
-			if (Array.isArray(subConversion)) {
+			if (typeof subConversion === 'string') {
 				lines.push(prefix + '  ' + getTossRangeText(range) + ' => return ' + subConversion)
 			} else if (subConversion === conversion) {
 				lines.push(prefix + '  ' + getTossRangeText(range) + ' => repeat from step ' + firstStep)
@@ -287,6 +287,59 @@ function getConversionText(conversion) {
 				prepareText(subConversion, prefix + '    ')
 			}
 		}
+	}
+}
+
+/* exported getConversionTables */
+function getConversionTables(conversion) {
+	let tables = [],
+		tablesConversions = [conversion]
+
+	for (let i = 0; i < tablesConversions.length; i++) {
+		tables.push(prepareConversionTable(tablesConversions[i]))
+	}
+
+	return tables
+
+	function prepareConversionTable(conversion) {
+		let columnsThrows = Math.floor(conversion.throws / 2),
+			rowThrows = conversion.throws - columnsThrows,
+			columnsFaces = generateTosses(conversion.dieA, false, columnsThrows)[0].faces,
+			rowFaces = generateTosses(conversion.dieA, false, rowThrows)[0].faces,
+			table = []
+
+		// Create header line
+		let row = ['Throw ' + (conversion.throws === 1 ? 'once' : conversion.throws + ' times')]
+		for (let columnsFace of columnsFaces) {
+			row.push(columnsFace.join(' '))
+		}
+		table.push(row)
+
+		// Create table
+		for (let i = 0; i < rowFaces.length; i++) {
+			let row = new Array(columnsFaces.length + 1)
+			row[0] = rowFaces[i].join(' ')
+			table.push(row)
+		}
+
+		// Fill table
+		for (let [range, subConversion] of conversion.conversions) {
+			for (let id of range.ids) {
+				let row = Math.floor(id / columnsFaces.length),
+					column = id % columnsFaces.length
+				if (typeof subConversion === 'string') {
+					table[row + 1][column + 1] = subConversion
+				} else {
+					let tableId = tablesConversions.findIndex(c => c.dieB.join(' ') === subConversion.dieB.join(' '))
+					if (tableId === -1) {
+						tableId = tablesConversions.push(subConversion) - 1
+					}
+					table[row + 1][column + 1] = 'Rule ' + (tableId + 1)
+				}
+			}
+		}
+
+		return table
 	}
 }
 

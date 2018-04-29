@@ -7,13 +7,30 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Converting dice</title>
 	<script src="lib.js"></script>
+	<style>
+		td {
+			border: thin black solid;
+			text-align: center;
+			min-width: 100px;
+		}
+
+		pre {
+			white-space: pre-wrap;
+		}
+
+		.clickable {
+			cursor: pointer;
+		}
+	</style>
 </head>
 
 <body>
 	<h1>Converting dice</h1>
 	<p>Show me how to convert a die with <input id="dieA" type="number" min="2" max="100" value="6"> faces to another one with <input id="dieB" type="number" min="2" max="100" value="6" size="3"> faces</p>
 	<p><label><input type="checkbox" id="makeFair" checked> Make sure the output die is fair, even when the input one is biased</label></p>
-	<pre id="output" style="white-space: pre-wrap"></pre>
+	<p><button id="showText">Show as text</button><button id="showTables" style="display: none">Show as tables</button></p>
+	<pre id="outputText" style="display: none"></pre>
+	<div id="outputTables"></div>
 	<script src="index.js"></script>
 </body>
 
